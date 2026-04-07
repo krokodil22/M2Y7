@@ -182,9 +182,12 @@ function renderBoard() {
   background.style.backgroundImage = "url('./lvl.svg')";
   board.appendChild(background);
 
-  board.appendChild(createCoordinateLabels());
-  board.appendChild(createFinishPoint());
-  board.appendChild(createHero());
+  const playfield = document.createElement('div');
+  playfield.className = 'board-playfield';
+  playfield.appendChild(createCoordinateLabels());
+  playfield.appendChild(createFinishPoint());
+  playfield.appendChild(createHero());
+  board.appendChild(playfield);
 
   levelTitle.textContent = level.title;
   levelProgress.textContent = `Открыто уровней: ${highestUnlockedLevel + 1} из ${levels.length}`;
