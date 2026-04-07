@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Тренажёр по программированию</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="data:," />
+    <script src="https://unpkg.com/blockly@10.4.3/blockly.min.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+
+      <main class="panel workspace-panel">
+        <div class="workspace-header">
+          <button id="run-program" class="run-button" type="button" aria-label="Запустить программу">
+            ▶ Запуск
+          </button>
+          <span class="run-hint">или Ctrl/⌘ + Enter</span>
+        </div>
+        <div id="blockly-workspace" class="blockly-workspace" aria-label="Поле Blockly"></div>
+      </main>
+
+      <section class="panel level-panel">
+        <div class="level-header">
+          <div class="level-meta compact">
+            <span id="level-progress"></span>
+            <h2 id="level-title">Уровень 1</h2>
+          </div>
+
+          
+          <select id="level-select" class="level-select" aria-label="Выбор уровня"></select>
+        </div>
+
+        <div class="level-description">
+          <p id="level-hint" class="level-hint"></p>
+          <p id="level-rule" class="level-rule"></p>
+        </div>
+
+        <div class="board-wrapper">
+          <div id="board" class="board"></div>
+        </div>
+
+      </section>
+    </div>
+
+    <div id="level-complete-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="level-complete-title">
+      <div class="modal-content">
+        <h3 id="level-complete-title">Молодец!</h3>
+        <p id="level-complete-message"></p>
+        <button id="next-level-button" class="next-level-button" type="button">Следующий уровень</button>
+        <button id="retry-level-button" class="retry-level-button" type="button" hidden>Попробовать еще раз</button>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
