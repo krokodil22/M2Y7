@@ -27,8 +27,6 @@ const levelCompleteTitle = document.getElementById('level-complete-title');
 const levelCompleteMessage = document.getElementById('level-complete-message');
 const nextLevelButton = document.getElementById('next-level-button');
 const retryLevelButton = document.getElementById('retry-level-button');
-const levelHint = document.getElementById('level-hint');
-const levelRule = document.getElementById('level-rule');
 
 let workspace;
 let currentLevelIndex = 0;
@@ -191,12 +189,6 @@ function renderBoard() {
 
   levelTitle.textContent = level.title;
   levelProgress.textContent = `Открыто уровней: ${highestUnlockedLevel + 1} из ${levels.length}`;
-  if (levelHint) {
-    levelHint.textContent = 'На картинке отмечен финиш. Укажи его координаты в блоке «Перейти в x, y». Герой всегда стартует из точки (0, 0).';
-  }
-  if (levelRule) {
-    levelRule.textContent = 'Правило: если координаты указаны верно, откроется следующий уровень.';
-  }
   renderLevelOptions();
 }
 
