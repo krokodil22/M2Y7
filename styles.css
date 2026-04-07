@@ -153,7 +153,7 @@ body {
   border-radius: 15%;
   background: #fff;
 }
- .board {
+.board {
   position: relative;
   aspect-ratio: 591 / 766;
   width: 100%;
@@ -167,6 +167,16 @@ body {
   background-repeat: no-repeat;
   pointer-events: none;
   z-index: 0;
+}
+.board-playfield {
+  position: absolute;
+  left: 12.57%;
+  right: 12.67%;
+  top: 30.05%;
+  bottom: 12.27%;
+  border-radius: 7.2%;
+  overflow: hidden;
+  z-index: 1;
 }
 .coordinate-labels {
   position: absolute;
