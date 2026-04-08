@@ -161,13 +161,12 @@ body {
   position: relative;
   aspect-ratio: 591 / 766;
   width: 100%;
-  max-height: min(72vh, 860px);
   overflow: hidden;
 }
 .board-background {
   position: absolute;
   inset: 0;
-  background-size: contain;
+  background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
   pointer-events: none;
