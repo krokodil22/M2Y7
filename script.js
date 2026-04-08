@@ -151,18 +151,22 @@ function createCoordinateLabels() {
   labelsLayer.className = 'coordinate-labels';
 
   for (let x = GRID_MIN; x <= GRID_MAX; x += 1) {
+    const projected = projectToBoardPercent(x, 0);
     const xLabel = document.createElement('span');
     xLabel.className = 'coord-label x-label';
     xLabel.textContent = String(x);
-    xLabel.style.left = `${projectToBoardPercent(x, 0).left}%`;
+    xLabel.style.left = `${projected.left}%`;
+    xLabel.style.top = `${projected.top}%`;
     labelsLayer.appendChild(xLabel);
   }
 
   for (let y = GRID_MIN; y <= GRID_MAX; y += 1) {
+    const projected = projectToBoardPercent(0, y);
     const yLabel = document.createElement('span');
     yLabel.className = 'coord-label y-label';
     yLabel.textContent = String(y);
-    yLabel.style.top = `${projectToBoardPercent(0, y).top}%`;
+    yLabel.style.left = `${projected.left}%`;
+    yLabel.style.top = `${projected.top}%`;
     labelsLayer.appendChild(yLabel);
   }
 
