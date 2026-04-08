@@ -30,6 +30,7 @@ body {
   gap: 18px;
   padding: 0;
   min-height: 100vh;
+  transition: filter 0.2s ease;
 }
 .panel {
   background: var(--panel);
@@ -278,9 +279,14 @@ body {
   justify-content: center;
   padding: 24px;
   background: rgba(17, 24, 39, 0.54);
+  z-index: 2147483647;
 }
 .modal.hidden {
   display: none;
+}
+
+body.modal-open .app-shell {
+  filter: brightness(0.82);
 }
 .modal-content {
   width: min(100%, 420px);
