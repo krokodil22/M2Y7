@@ -300,6 +300,7 @@ function initializeBlockly() {
 
 function hideLevelCompleteModal() {
   levelCompleteModal?.classList.add('hidden');
+  document.body.classList.remove('modal-open');
 }
 
 function showLevelCompleteModal(message, canProceed = true, options = {}) {
@@ -319,6 +320,7 @@ function showLevelCompleteModal(message, canProceed = true, options = {}) {
     retryLevelButton.hidden = !showRetry;
   }
   levelCompleteModal.classList.remove('hidden');
+  document.body.classList.add('modal-open');
 }
 
 function setLevel(index) {
