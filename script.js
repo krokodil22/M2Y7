@@ -12,13 +12,13 @@ const levels = [
   { title: 'Уровень 1', finish: { x: 2, y: 1 } },
   { title: 'Уровень 2', finish: { x: -3, y: 4 } },
   { title: 'Уровень 3', finish: { x: 4, y: -2 } },
-  { title: 'Уровень 4', finish: { x: -4, y: -1 } },
-  { title: 'Уровень 5', finish: { x: 3, y: 0 } },
-  { title: 'Уровень 6', finish: { x: 0, y: 5 } },
+  { title: 'Уровень 4', finishes: [{ x: -4, y: -1 }, { x: 1, y: 3 }] },
+  { title: 'Уровень 5', finishes: [{ x: 3, y: 0 }, { x: -2, y: 4 }, { x: 4, y: -3 }] },
+  { title: 'Уровень 6', finishes: [{ x: 0, y: 4 }, { x: -4, y: -2 }, { x: 2, y: 1 }] },
   { title: 'Уровень 7', finish: { x: 30, y: 60 } },
   { title: 'Уровень 8', finish: { x: 60, y: 90 } },
-  { title: 'Уровень 9', finish: { x: 90, y: 120 } },
-  { title: 'Уровень 10', finish: { x: 150, y: 150 } },
+  { title: 'Уровень 9', finishes: [{ x: 90, y: 120 }, { x: -30, y: 60 }] },
+  { title: 'Уровень 10', finishes: [{ x: 120, y: 120 }, { x: 60, y: -30 }, { x: -90, y: 90 }] },
 ];
 
 const board = document.getElementById('board');
@@ -218,14 +218,23 @@ function applyGridConstraintsToBlocks() {
   }
 }
 
-function createFinishPoint() {
-  const finish = document.createElement('div');
-  finish.className = 'finish-point';
-  const { x, y } = getCurrentLevel().finish;
-  const pos = projectToBoardPercent(x, y);
-  finish.style.left = `${pos.left}%`;
-  finish.style.top = `${pos.top}%`;
-  return finish;
+function getLevelFinishes(level = getCurrentLevel()) {
+  if (Array.isArray(level.finishes) && level.finishes.length > 0) {
+    return level.finishes;
+  }
+  return [level.finish];
+}
+
+function createFinishPoints() {
+  const finishes = getLevelFinishes();
+  return finishes.map(({ x, y }) => {
+    const finish = document.createElement('div');
+    finish.className = 'finish-point';
+    const pos = projectToBoardPercent(x, y);
+    finish.style.left = `${pos.left}%`;
+    finish.style.top = `${pos.top}%`;
+    return finish;
+  });
 }
 
 function createHero() {
@@ -253,7 +262,9 @@ function renderBoard() {
 
   const entitiesLayer = document.createElement('div');
   entitiesLayer.className = 'board-entities';
-  entitiesLayer.appendChild(createFinishPoint());
+  for (const finishPoint of createFinishPoints()) {
+    entitiesLayer.appendChild(finishPoint);
+  }
   entitiesLayer.appendChild(createHero());
   board.appendChild(entitiesLayer);
 
@@ -367,22 +378,23 @@ function setLevel(index) {
   renderBoard();
 }
 
-function getGoToCommand() {
+function getGoToCommands() {
   const startBlock = workspace.getBlocksByType('maze_start', false)[0];
-  if (!startBlock) return null;
+  if (!startBlock) return [];
   let currentBlock = startBlock.getNextBlock();
+  const commands = [];
 
   while (currentBlock) {
     if (currentBlock.type === 'maze_go_to') {
-      return {
+      commands.push({
         x: Number(currentBlock.getFieldValue('X')),
         y: Number(currentBlock.getFieldValue('Y')),
-      };
+      });
     }
     currentBlock = currentBlock.getNextBlock();
   }
 
-  return null;
+  return commands;
 }
 
 
@@ -452,22 +464,24 @@ function handleLevelCompleted() {
 async function runProgram() {
   if (isProgramRunning) return;
 
-  const command = getGoToCommand();
-  if (!command) {
-    showLevelCompleteModal('Добавь блок «Перейти в x, y» и укажи координаты.', false, { showRetry: true, hideTitle: true });
+  const commands = getGoToCommands();
+  if (commands.length === 0) {
+    showLevelCompleteModal('Добавь хотя бы один блок «Перейти в x, y» и укажи координаты.', false, { showRetry: true, hideTitle: true });
     return;
   }
 
   const grid = getCurrentGrid();
-  const hasInvalidStep = ((command.x - grid.min) % grid.step !== 0) || ((command.y - grid.min) % grid.step !== 0);
-  const isOutOfRange = command.x < grid.min || command.x > grid.max || command.y < grid.min || command.y > grid.max;
-  if (hasInvalidStep || isOutOfRange) {
-    showLevelCompleteModal(
-      `Для ${getCurrentLevel().title} используй шаг ${grid.step}. Допустимые координаты: от ${grid.min} до ${grid.max}.`,
-      false,
-      { showRetry: true, hideTitle: true },
-    );
-    return;
+  for (const command of commands) {
+    const hasInvalidStep = ((command.x - grid.min) % grid.step !== 0) || ((command.y - grid.min) % grid.step !== 0);
+    const isOutOfRange = command.x < grid.min || command.x > grid.max || command.y < grid.min || command.y > grid.max;
+    if (hasInvalidStep || isOutOfRange) {
+      showLevelCompleteModal(
+        `Для ${getCurrentLevel().title} используй шаг ${grid.step}. Допустимые координаты: от ${grid.min} до ${grid.max}.`,
+        false,
+        { showRetry: true, hideTitle: true },
+      );
+      return;
+    }
   }
 
   isProgramRunning = true;
@@ -477,18 +491,27 @@ async function runProgram() {
 
   try {
     await new Promise((resolve) => setTimeout(resolve, 250));
-    await animateHeroTo(command);
+    const visitedFinishes = new Set();
+    const finishPoints = getLevelFinishes();
 
-    const finish = getCurrentLevel().finish;
-    const isCorrect = command.x === finish.x && command.y === finish.y;
+    for (const command of commands) {
+      await animateHeroTo(command);
+      const reachedIndex = finishPoints.findIndex((finish) => finish.x === command.x && finish.y === command.y);
+      if (reachedIndex >= 0) {
+        visitedFinishes.add(reachedIndex);
+      }
+    }
+
+    const isCorrect = visitedFinishes.size === finishPoints.length;
 
     if (isCorrect) {
       handleLevelCompleted();
       return;
     }
 
+    const lastCommand = commands[commands.length - 1];
     showLevelCompleteModal(
-      `Пока неверно. Ты отправил героя в (${command.x}, ${command.y}), а финиш находится в другой точке.`,
+      `Пока неверно. Ты посетил ${visitedFinishes.size} из ${finishPoints.length} финишных точек. Последняя точка: (${lastCommand.x}, ${lastCommand.y}).`,
       false,
       { showRetry: true, hideTitle: true },
     );
