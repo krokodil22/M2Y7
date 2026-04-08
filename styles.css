@@ -93,7 +93,9 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  height: 100vh;
   padding: 0 12px 12px;
+  overflow: hidden;
 }
 .level-header {
   position: absolute;
@@ -159,7 +161,12 @@ body {
   z-index: 1;
   width: 100%;
   margin: 0;
-  padding-top: 0;
+  padding: 84px 0 0;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   container-type: inline-size;
   border-radius: 0;
   overflow: hidden;
@@ -170,7 +177,10 @@ body {
 .board {
   position: relative;
   aspect-ratio: 591 / 684;
-  width: 100%;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
   overflow: hidden;
 }
 .board-background {
