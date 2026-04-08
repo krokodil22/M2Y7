@@ -5,8 +5,8 @@ const HERO_START = { x: 0, y: 0 };
 const PLAYFIELD_BOUNDS = {
   left: 12.57,
   right: 12.67,
-  top: 30.05,
-  bottom: 12.27,
+  top: 21.67,
+  bottom: 13.74,
 };
 
 const levels = [
