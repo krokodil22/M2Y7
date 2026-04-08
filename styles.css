@@ -150,6 +150,7 @@ body {
   position: relative;
   width: min(100%, 560px);
   margin: 0 auto;
+  container-type: inline-size;
   border-radius: 0;
   overflow: hidden;
   border-radius: 15%;
@@ -191,7 +192,7 @@ body {
   position: absolute;
   color: #5c54d6;
   font-weight: 700;
-  font-size: clamp(12px, 1.5vw, 17px);
+  font-size: clamp(9px, 2.2cqw, 17px);
   transform: translate(-50%, -50%);
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.85);
   background: #D6D1FF;
