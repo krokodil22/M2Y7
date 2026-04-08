@@ -154,11 +154,6 @@ function createCoordinateLabels() {
     const projected = projectToBoardPercent(x, 0);
     const xLabel = document.createElement('span');
     xLabel.className = 'coord-label x-label';
-    if (x === GRID_MIN) {
-      xLabel.classList.add('coord-label-edge-left');
-    } else if (x === GRID_MAX) {
-      xLabel.classList.add('coord-label-edge-right');
-    }
     xLabel.textContent = String(x);
     xLabel.style.left = `${projected.left}%`;
     xLabel.style.top = `${projected.top}%`;
