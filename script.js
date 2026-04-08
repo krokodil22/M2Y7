@@ -1,6 +1,7 @@
-const GRID_MIN = -5;
-const GRID_MAX = 5;
-const GRID_SIZE = GRID_MAX - GRID_MIN + 1;
+const GRID_MIN = -150;
+const GRID_MAX = 150;
+const GRID_STEP = 30;
+const GRID_SIZE = ((GRID_MAX - GRID_MIN) / GRID_STEP) + 1;
 const HERO_START = { x: 0, y: 0 };
 const PLAYFIELD_BOUNDS = {
   left: 12.57,
@@ -10,16 +11,16 @@ const PLAYFIELD_BOUNDS = {
 };
 
 const levels = [
-  { title: 'Уровень 1', finish: { x: 2, y: 1 } },
-  { title: 'Уровень 2', finish: { x: -3, y: 4 } },
-  { title: 'Уровень 3', finish: { x: 4, y: -2 } },
-  { title: 'Уровень 4', finish: { x: -1, y: -5 } },
-  { title: 'Уровень 5', finish: { x: 5, y: 5 } },
-  { title: 'Уровень 6', finish: { x: -4, y: -1 } },
-  { title: 'Уровень 7', finish: { x: 1, y: -4 } },
-  { title: 'Уровень 8', finish: { x: -2, y: 2 } },
-  { title: 'Уровень 9', finish: { x: 3, y: 0 } },
-  { title: 'Уровень 10', finish: { x: 0, y: 5 } },
+  { title: 'Уровень 1', finish: { x: 60, y: 30 } },
+  { title: 'Уровень 2', finish: { x: -90, y: 120 } },
+  { title: 'Уровень 3', finish: { x: 120, y: -60 } },
+  { title: 'Уровень 4', finish: { x: -120, y: -30 } },
+  { title: 'Уровень 5', finish: { x: 90, y: 0 } },
+  { title: 'Уровень 6', finish: { x: 0, y: 150 } },
+  { title: 'Уровень 7', finish: { x: 30, y: 60 } },
+  { title: 'Уровень 8', finish: { x: 60, y: 90 } },
+  { title: 'Уровень 9', finish: { x: 120, y: 30 } },
+  { title: 'Уровень 10', finish: { x: 150, y: 120 } },
 ];
 
 const board = document.getElementById('board');
@@ -65,7 +66,7 @@ defineBlocksWithJsonArray([
         value: 0,
         min: GRID_MIN,
         max: GRID_MAX,
-        precision: 1,
+        precision: GRID_STEP,
       },
       {
         type: 'field_number',
@@ -73,7 +74,7 @@ defineBlocksWithJsonArray([
         value: 0,
         min: GRID_MIN,
         max: GRID_MAX,
-        precision: 1,
+        precision: GRID_STEP,
       },
     ],
     previousStatement: null,
@@ -125,8 +126,8 @@ function loadProgress() {
 }
 
 function coordinateToPercent(x, y) {
-  const col = x - GRID_MIN;
-  const row = GRID_MAX - y;
+  const col = (x - GRID_MIN) / GRID_STEP;
+  const row = (GRID_MAX - y) / GRID_STEP;
   const step = 100 / (GRID_SIZE - 1);
 
   return {
@@ -150,7 +151,7 @@ function createCoordinateLabels() {
   const labelsLayer = document.createElement('div');
   labelsLayer.className = 'coordinate-labels';
 
-  for (let x = GRID_MIN; x <= GRID_MAX; x += 1) {
+  for (let x = GRID_MIN; x <= GRID_MAX; x += GRID_STEP) {
     const projected = projectToBoardPercent(x, 0);
     const xLabel = document.createElement('span');
     xLabel.className = 'coord-label x-label';
@@ -160,7 +161,7 @@ function createCoordinateLabels() {
     labelsLayer.appendChild(xLabel);
   }
 
-  for (let y = GRID_MIN; y <= GRID_MAX; y += 1) {
+  for (let y = GRID_MIN; y <= GRID_MAX; y += GRID_STEP) {
     const projected = projectToBoardPercent(0, y);
     const yLabel = document.createElement('span');
     yLabel.className = 'coord-label y-label';
