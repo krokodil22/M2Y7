@@ -373,6 +373,59 @@ function getGoToCommand() {
   return null;
 }
 
+
+function animateHeroTo(targetPosition) {
+  const heroElement = board.querySelector('.hero');
+  if (!heroElement) {
+    currentHeroPosition = { ...targetPosition };
+    renderBoard();
+    return Promise.resolve();
+  }
+
+  const startPosition = { ...currentHeroPosition };
+  const deltaX = targetPosition.x - startPosition.x;
+  const deltaY = targetPosition.y - startPosition.y;
+  const distance = Math.hypot(deltaX, deltaY);
+
+  if (distance === 0) {
+    currentHeroPosition = { ...targetPosition };
+    return Promise.resolve();
+  }
+
+  const baseDurationMs = 180;
+  const perCellMs = 110;
+  const maxDurationMs = 1200;
+  const durationMs = Math.min(maxDurationMs, Math.round(baseDurationMs + distance * perCellMs));
+
+  return new Promise((resolve) => {
+    let isSettled = false;
+    const finish = () => {
+      if (isSettled) return;
+      isSettled = true;
+      heroElement.removeEventListener('transitionend', onTransitionEnd);
+      clearTimeout(fallbackTimer);
+      currentHeroPosition = { ...targetPosition };
+      resolve();
+    };
+
+    const onTransitionEnd = (event) => {
+      if (event.target !== heroElement) return;
+      if (event.propertyName !== 'left' && event.propertyName !== 'top') return;
+      finish();
+    };
+
+    const fallbackTimer = window.setTimeout(finish, durationMs + 90);
+    const projected = projectToBoardPercent(targetPosition.x, targetPosition.y);
+
+    heroElement.addEventListener('transitionend', onTransitionEnd);
+    heroElement.style.transitionDuration = `${durationMs}ms`;
+
+    requestAnimationFrame(() => {
+      heroElement.style.left = `${projected.left}%`;
+      heroElement.style.top = `${projected.top}%`;
+    });
+  });
+}
 function handleLevelCompleted() {
   highestUnlockedLevel = Math.max(highestUnlockedLevel, Math.min(currentLevelIndex + 1, levels.length - 1));
   saveProgress();
@@ -411,9 +464,8 @@ async function runProgram() {
   renderBoard();
 
   try {
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    currentHeroPosition = { ...command };
-    renderBoard();
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    await animateHeroTo(command);
 
     const finish = getCurrentLevel().finish;
     const isCorrect = command.x === finish.x && command.y === finish.y;
