@@ -159,7 +159,7 @@ body {
 }
 .board {
   position: relative;
-  aspect-ratio: 591 / 766;
+  aspect-ratio: 591 / 684;
   width: 100%;
   overflow: hidden;
 }
@@ -176,8 +176,8 @@ body {
   position: absolute;
   left: 12.57%;
   right: 12.67%;
-  top: 30.05%;
-  bottom: 12.27%;
+  top: 21.67%;
+  bottom: 13.74%;
   border-radius: 7.2%;
   overflow: hidden;
   z-index: 1;
