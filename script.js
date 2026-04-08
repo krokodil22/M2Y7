@@ -191,7 +191,7 @@ function createFinishPoint() {
   const finish = document.createElement('div');
   finish.className = 'finish-point';
   const { x, y } = getCurrentLevel().finish;
-  const pos = coordinateToPercent(x, y);
+  const pos = projectToBoardPercent(x, y);
   finish.style.left = `${pos.left}%`;
   finish.style.top = `${pos.top}%`;
   return finish;
@@ -200,7 +200,7 @@ function createFinishPoint() {
 function createHero() {
   const hero = document.createElement('div');
   hero.className = 'hero';
-  const pos = coordinateToPercent(currentHeroPosition.x, currentHeroPosition.y);
+  const pos = projectToBoardPercent(currentHeroPosition.x, currentHeroPosition.y);
   hero.style.left = `${pos.left}%`;
   hero.style.top = `${pos.top}%`;
   return hero;
@@ -218,9 +218,13 @@ function renderBoard() {
   const playfield = document.createElement('div');
   playfield.className = 'board-playfield';
   board.appendChild(createCoordinateLabels());
-  playfield.appendChild(createFinishPoint());
-  playfield.appendChild(createHero());
   board.appendChild(playfield);
+
+  const entitiesLayer = document.createElement('div');
+  entitiesLayer.className = 'board-entities';
+  entitiesLayer.appendChild(createFinishPoint());
+  entitiesLayer.appendChild(createHero());
+  board.appendChild(entitiesLayer);
 
   levelTitle.textContent = level.title;
   levelProgress.textContent = `Открыто уровней: ${highestUnlockedLevel + 1} из ${levels.length}`;
