@@ -26,7 +26,7 @@ body {
 }
 .app-shell {
   display: grid;
-  grid-template-columns: minmax(720px, 1fr) minmax(360px, 520px);
+  grid-template-columns: minmax(620px, 1fr) clamp(300px, 34vw, 520px);
   gap: 18px;
   padding: 0;
   min-height: 100vh;
@@ -91,6 +91,7 @@ body {
 .level-panel {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 .level-header {
   display: flex;
@@ -101,8 +102,8 @@ body {
 }
 .level-meta { display: grid; gap: 4px; }
 .level-meta.compact { align-content: start; }
-.level-meta #level-progress { color: var(--text); font-size: 18px; }
-.level-meta h2 { margin: 0; font-size: 32px; line-height: 1.1; }
+.level-meta #level-progress { color: var(--text); font-size: clamp(14px, 1.35vw, 18px); }
+.level-meta h2 { margin: 0; font-size: clamp(24px, 2.4vw, 32px); line-height: 1.1; }
 .level-select-label {
   display: flex;
   flex-direction: column;
@@ -112,7 +113,7 @@ body {
   text-align: right;
 }
 .level-select {
-  min-width: 190px;
+  min-width: clamp(130px, 16vw, 190px);
   padding: 10px 14px;
   border-radius: 14px;
   border: 1px solid rgba(124, 140, 255, 0.35);
@@ -147,6 +148,8 @@ body {
 }
 .board-wrapper {
   position: relative;
+  width: min(100%, 560px);
+  margin: 0 auto;
   border-radius: 0;
   overflow: hidden;
   border-radius: 15%;
@@ -156,6 +159,7 @@ body {
   position: relative;
   aspect-ratio: 591 / 766;
   width: 100%;
+  max-height: min(72vh, 860px);
   overflow: hidden;
 }
 .board-background {
@@ -285,7 +289,12 @@ body {
   .workspace-panel {
     min-height: 100vh;
   }
-  .board { min-height: 520px; }
+  .level-panel {
+    padding-top: 16px;
+  }
+  .board-wrapper {
+    width: min(100%, 640px);
+  }
 }
 
 @media (max-width: 640px) {
