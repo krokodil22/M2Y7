@@ -90,6 +90,17 @@ function getCurrentGrid() {
   return currentLevelIndex >= 6 ? ADVANCED_GRID : DEFAULT_GRID;
 }
 
+function getLevelStartPosition() {
+  const grid = getCurrentGrid();
+  const hasZeroPoint = grid.min <= 0 && grid.max >= 0;
+
+  if (hasZeroPoint) {
+    return { ...HERO_START };
+  }
+
+  return { x: grid.min, y: grid.min };
+}
+
 function renderLevelOptions() {
   if (!levelSelect) return;
 
@@ -155,9 +166,10 @@ function createCoordinateLabels() {
   const labelsLayer = document.createElement('div');
   labelsLayer.className = 'coordinate-labels';
   const grid = getCurrentGrid();
+  const axisReference = grid.min <= 0 && grid.max >= 0 ? 0 : grid.min;
 
   for (let x = grid.min; x <= grid.max; x += grid.step) {
-    const projected = projectToBoardPercent(x, 0);
+    const projected = projectToBoardPercent(x, axisReference);
     const xLabel = document.createElement('span');
     xLabel.className = 'coord-label x-label';
     xLabel.textContent = String(x);
@@ -167,7 +179,7 @@ function createCoordinateLabels() {
   }
 
   for (let y = grid.min; y <= grid.max; y += grid.step) {
-    const projected = projectToBoardPercent(0, y);
+    const projected = projectToBoardPercent(axisReference, y);
     const yLabel = document.createElement('span');
     yLabel.className = 'coord-label y-label';
     yLabel.textContent = String(y);
@@ -179,15 +191,15 @@ function createCoordinateLabels() {
   const xAxisName = document.createElement('span');
   xAxisName.className = 'axis-name axis-name-x';
   xAxisName.textContent = 'X';
-  xAxisName.style.left = `calc(${projectToBoardPercent(grid.max, 0).left}% + 2.2cqw)`;
-  xAxisName.style.top = `${projectToBoardPercent(0, 0).top}%`;
+  xAxisName.style.left = `calc(${projectToBoardPercent(grid.max, axisReference).left}% + 2.2cqw)`;
+  xAxisName.style.top = `${projectToBoardPercent(axisReference, axisReference).top}%`;
   labelsLayer.appendChild(xAxisName);
 
   const yAxisName = document.createElement('span');
   yAxisName.className = 'axis-name axis-name-y';
   yAxisName.textContent = 'Y';
-  yAxisName.style.left = `${projectToBoardPercent(0, 0).left}%`;
-  yAxisName.style.top = `calc(${projectToBoardPercent(0, grid.max).top}% - 2.4cqw)`;
+  yAxisName.style.left = `${projectToBoardPercent(axisReference, axisReference).left}%`;
+  yAxisName.style.top = `calc(${projectToBoardPercent(axisReference, grid.max).top}% - 2.4cqw)`;
   labelsLayer.appendChild(yAxisName);
 
   return labelsLayer;
@@ -349,7 +361,7 @@ function showLevelCompleteModal(message, canProceed = true, options = {}) {
 function setLevel(index) {
   if (index < 0 || index > highestUnlockedLevel || index >= levels.length) return;
   currentLevelIndex = index;
-  currentHeroPosition = { ...HERO_START };
+  currentHeroPosition = getLevelStartPosition();
   hideLevelCompleteModal();
   resetWorkspace();
   renderBoard();
@@ -460,7 +472,7 @@ async function runProgram() {
 
   isProgramRunning = true;
   runButton.disabled = true;
-  currentHeroPosition = { ...HERO_START };
+  currentHeroPosition = getLevelStartPosition();
   renderBoard();
 
   try {
@@ -512,7 +524,7 @@ if (nextLevelButton) {
 if (retryLevelButton) {
   retryLevelButton.addEventListener('click', () => {
     hideLevelCompleteModal();
-    currentHeroPosition = { ...HERO_START };
+    currentHeroPosition = getLevelStartPosition();
     renderBoard();
   });
 }
