@@ -2,6 +2,12 @@ const GRID_MIN = -5;
 const GRID_MAX = 5;
 const GRID_SIZE = GRID_MAX - GRID_MIN + 1;
 const HERO_START = { x: 0, y: 0 };
+const PLAYFIELD_BOUNDS = {
+  left: 12.57,
+  right: 12.67,
+  top: 30.05,
+  bottom: 12.27,
+};
 
 const levels = [
   { title: 'Уровень 1', finish: { x: 2, y: 1 } },
@@ -129,6 +135,17 @@ function coordinateToPercent(x, y) {
   };
 }
 
+function projectToBoardPercent(x, y) {
+  const coord = coordinateToPercent(x, y);
+  const width = 100 - PLAYFIELD_BOUNDS.left - PLAYFIELD_BOUNDS.right;
+  const height = 100 - PLAYFIELD_BOUNDS.top - PLAYFIELD_BOUNDS.bottom;
+
+  return {
+    left: PLAYFIELD_BOUNDS.left + (coord.left / 100) * width,
+    top: PLAYFIELD_BOUNDS.top + (coord.top / 100) * height,
+  };
+}
+
 function createCoordinateLabels() {
   const labelsLayer = document.createElement('div');
   labelsLayer.className = 'coordinate-labels';
@@ -136,13 +153,8 @@ function createCoordinateLabels() {
   for (let x = GRID_MIN; x <= GRID_MAX; x += 1) {
     const xLabel = document.createElement('span');
     xLabel.className = 'coord-label x-label';
-    if (x === GRID_MIN) {
-      xLabel.classList.add('coord-label-edge-left');
-    } else if (x === GRID_MAX) {
-      xLabel.classList.add('coord-label-edge-right');
-    }
     xLabel.textContent = String(x);
-    xLabel.style.left = `${coordinateToPercent(x, 0).left}%`;
+    xLabel.style.left = `${projectToBoardPercent(x, 0).left}%`;
     labelsLayer.appendChild(xLabel);
   }
 
@@ -150,18 +162,22 @@ function createCoordinateLabels() {
     const yLabel = document.createElement('span');
     yLabel.className = 'coord-label y-label';
     yLabel.textContent = String(y);
-    yLabel.style.top = `${coordinateToPercent(0, y).top}%`;
+    yLabel.style.top = `${projectToBoardPercent(0, y).top}%`;
     labelsLayer.appendChild(yLabel);
   }
 
   const xAxisName = document.createElement('span');
   xAxisName.className = 'axis-name axis-name-x';
   xAxisName.textContent = 'X';
+  xAxisName.style.left = `calc(${projectToBoardPercent(GRID_MAX, 0).left}% + 2.2cqw)`;
+  xAxisName.style.top = `${projectToBoardPercent(0, 0).top}%`;
   labelsLayer.appendChild(xAxisName);
 
   const yAxisName = document.createElement('span');
   yAxisName.className = 'axis-name axis-name-y';
   yAxisName.textContent = 'Y';
+  yAxisName.style.left = `${projectToBoardPercent(0, 0).left}%`;
+  yAxisName.style.top = `calc(${projectToBoardPercent(0, GRID_MAX).top}% - 2.4cqw)`;
   labelsLayer.appendChild(yAxisName);
 
   return labelsLayer;
@@ -197,7 +213,7 @@ function renderBoard() {
 
   const playfield = document.createElement('div');
   playfield.className = 'board-playfield';
-  playfield.appendChild(createCoordinateLabels());
+  board.appendChild(createCoordinateLabels());
   playfield.appendChild(createFinishPoint());
   playfield.appendChild(createHero());
   board.appendChild(playfield);

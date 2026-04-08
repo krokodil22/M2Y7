@@ -185,7 +185,7 @@ body {
 .coordinate-labels {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   pointer-events: none;
 }
 .coord-label {
@@ -215,13 +215,9 @@ body {
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.9);
 }
 .axis-name-x {
-  right: 8px;
-  top: 50%;
   transform: translateY(-50%);
 }
 .axis-name-y {
-  left: 50%;
-  top: 8px;
   transform: translateX(-50%);
 }
 .finish-point {
