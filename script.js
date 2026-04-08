@@ -154,6 +154,16 @@ function createCoordinateLabels() {
     labelsLayer.appendChild(yLabel);
   }
 
+  const xAxisName = document.createElement('span');
+  xAxisName.className = 'axis-name axis-name-x';
+  xAxisName.textContent = 'X';
+  labelsLayer.appendChild(xAxisName);
+
+  const yAxisName = document.createElement('span');
+  yAxisName.className = 'axis-name axis-name-y';
+  yAxisName.textContent = 'Y';
+  labelsLayer.appendChild(yAxisName);
+
   return labelsLayer;
 }
 
