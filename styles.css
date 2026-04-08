@@ -192,15 +192,23 @@ body {
   position: absolute;
   color: #5c54d6;
   font-weight: 700;
-  font-size: clamp(10px, 2.7cqw, 17px);
+  font-size: clamp(9px, 2.2cqw, 17px);
   transform: translate(-50%, -50%);
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  line-height: 1;
 }
 .x-label {
   top: 58.9%;
 }
 .y-label {
   left: 50%;
+}
+.coord-label-edge-left {
+  transform: translate(0, -50%);
+}
+.coord-label-edge-right {
+  transform: translate(-100%, -50%);
 }
 .finish-point {
   position: absolute;
