@@ -136,6 +136,11 @@ function createCoordinateLabels() {
   for (let x = GRID_MIN; x <= GRID_MAX; x += 1) {
     const xLabel = document.createElement('span');
     xLabel.className = 'coord-label x-label';
+    if (x === GRID_MIN) {
+      xLabel.classList.add('coord-label-edge-left');
+    } else if (x === GRID_MAX) {
+      xLabel.classList.add('coord-label-edge-right');
+    }
     xLabel.textContent = String(x);
     xLabel.style.left = `${coordinateToPercent(x, 0).left}%`;
     labelsLayer.appendChild(xLabel);
