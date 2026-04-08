@@ -1,5 +1,5 @@
 const DEFAULT_GRID = { min: -5, max: 5, step: 1 };
-const ADVANCED_GRID = { min: 30, max: 150, step: 30 };
+const ADVANCED_GRID = { min: -150, max: 150, step: 30 };
 const HERO_START = { x: 0, y: 0 };
 const PLAYFIELD_BOUNDS = {
   left: 12.57,
