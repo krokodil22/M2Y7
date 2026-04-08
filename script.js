@@ -1,6 +1,5 @@
-const GRID_MIN = -5;
-const GRID_MAX = 5;
-const GRID_SIZE = GRID_MAX - GRID_MIN + 1;
+const DEFAULT_GRID = { min: -5, max: 5, step: 1 };
+const ADVANCED_GRID = { min: 30, max: 150, step: 30 };
 const HERO_START = { x: 0, y: 0 };
 const PLAYFIELD_BOUNDS = {
   left: 12.57,
@@ -13,13 +12,13 @@ const levels = [
   { title: 'Уровень 1', finish: { x: 2, y: 1 } },
   { title: 'Уровень 2', finish: { x: -3, y: 4 } },
   { title: 'Уровень 3', finish: { x: 4, y: -2 } },
-  { title: 'Уровень 4', finish: { x: -1, y: -5 } },
-  { title: 'Уровень 5', finish: { x: 5, y: 5 } },
-  { title: 'Уровень 6', finish: { x: -4, y: -1 } },
-  { title: 'Уровень 7', finish: { x: 1, y: -4 } },
-  { title: 'Уровень 8', finish: { x: -2, y: 2 } },
-  { title: 'Уровень 9', finish: { x: 3, y: 0 } },
-  { title: 'Уровень 10', finish: { x: 0, y: 5 } },
+  { title: 'Уровень 4', finish: { x: -4, y: -1 } },
+  { title: 'Уровень 5', finish: { x: 3, y: 0 } },
+  { title: 'Уровень 6', finish: { x: 0, y: 5 } },
+  { title: 'Уровень 7', finish: { x: 30, y: 60 } },
+  { title: 'Уровень 8', finish: { x: 60, y: 90 } },
+  { title: 'Уровень 9', finish: { x: 90, y: 120 } },
+  { title: 'Уровень 10', finish: { x: 150, y: 150 } },
 ];
 
 const board = document.getElementById('board');
@@ -63,17 +62,17 @@ defineBlocksWithJsonArray([
         type: 'field_number',
         name: 'X',
         value: 0,
-        min: GRID_MIN,
-        max: GRID_MAX,
-        precision: 1,
+        min: DEFAULT_GRID.min,
+        max: DEFAULT_GRID.max,
+        precision: DEFAULT_GRID.step,
       },
       {
         type: 'field_number',
         name: 'Y',
         value: 0,
-        min: GRID_MIN,
-        max: GRID_MAX,
-        precision: 1,
+        min: DEFAULT_GRID.min,
+        max: DEFAULT_GRID.max,
+        precision: DEFAULT_GRID.step,
       },
     ],
     previousStatement: null,
@@ -85,6 +84,10 @@ defineBlocksWithJsonArray([
 
 function getCurrentLevel() {
   return levels[currentLevelIndex];
+}
+
+function getCurrentGrid() {
+  return currentLevelIndex >= 6 ? ADVANCED_GRID : DEFAULT_GRID;
 }
 
 function renderLevelOptions() {
@@ -125,9 +128,11 @@ function loadProgress() {
 }
 
 function coordinateToPercent(x, y) {
-  const col = x - GRID_MIN;
-  const row = GRID_MAX - y;
-  const step = 100 / (GRID_SIZE - 1);
+  const grid = getCurrentGrid();
+  const gridSize = ((grid.max - grid.min) / grid.step) + 1;
+  const col = (x - grid.min) / grid.step;
+  const row = (grid.max - y) / grid.step;
+  const step = 100 / (gridSize - 1);
 
   return {
     left: col * step,
@@ -149,8 +154,9 @@ function projectToBoardPercent(x, y) {
 function createCoordinateLabels() {
   const labelsLayer = document.createElement('div');
   labelsLayer.className = 'coordinate-labels';
+  const grid = getCurrentGrid();
 
-  for (let x = GRID_MIN; x <= GRID_MAX; x += 1) {
+  for (let x = grid.min; x <= grid.max; x += grid.step) {
     const projected = projectToBoardPercent(x, 0);
     const xLabel = document.createElement('span');
     xLabel.className = 'coord-label x-label';
@@ -160,7 +166,7 @@ function createCoordinateLabels() {
     labelsLayer.appendChild(xLabel);
   }
 
-  for (let y = GRID_MIN; y <= GRID_MAX; y += 1) {
+  for (let y = grid.min; y <= grid.max; y += grid.step) {
     const projected = projectToBoardPercent(0, y);
     const yLabel = document.createElement('span');
     yLabel.className = 'coord-label y-label';
@@ -173,7 +179,7 @@ function createCoordinateLabels() {
   const xAxisName = document.createElement('span');
   xAxisName.className = 'axis-name axis-name-x';
   xAxisName.textContent = 'X';
-  xAxisName.style.left = `calc(${projectToBoardPercent(GRID_MAX, 0).left}% + 2.2cqw)`;
+  xAxisName.style.left = `calc(${projectToBoardPercent(grid.max, 0).left}% + 2.2cqw)`;
   xAxisName.style.top = `${projectToBoardPercent(0, 0).top}%`;
   labelsLayer.appendChild(xAxisName);
 
@@ -181,10 +187,23 @@ function createCoordinateLabels() {
   yAxisName.className = 'axis-name axis-name-y';
   yAxisName.textContent = 'Y';
   yAxisName.style.left = `${projectToBoardPercent(0, 0).left}%`;
-  yAxisName.style.top = `calc(${projectToBoardPercent(0, GRID_MAX).top}% - 2.4cqw)`;
+  yAxisName.style.top = `calc(${projectToBoardPercent(0, grid.max).top}% - 2.4cqw)`;
   labelsLayer.appendChild(yAxisName);
 
   return labelsLayer;
+}
+
+function applyGridConstraintsToBlocks() {
+  if (!workspace) return;
+  const grid = getCurrentGrid();
+  const goToBlocks = workspace.getBlocksByType('maze_go_to', false);
+
+  for (const block of goToBlocks) {
+    const xField = block.getField('X');
+    const yField = block.getField('Y');
+    xField?.setConstraints(grid.min, grid.max, grid.step);
+    yField?.setConstraints(grid.min, grid.max, grid.step);
+  }
 }
 
 function createFinishPoint() {
@@ -243,6 +262,7 @@ function resetWorkspace() {
   goToBlock.render();
   goToBlock.moveBy(36, 120);
   startBlock.nextConnection.connect(goToBlock.previousConnection);
+  applyGridConstraintsToBlocks();
 
   startBlock.select();
   workspace.centerOnBlock(startBlock.id);
@@ -296,6 +316,9 @@ function initializeBlockly() {
     workspace.scrollCenter();
   });
   window.addEventListener('resize', () => Blockly.svgResize(workspace));
+  workspace.addChangeListener(() => {
+    applyGridConstraintsToBlocks();
+  });
 }
 
 function hideLevelCompleteModal() {
@@ -367,6 +390,18 @@ async function runProgram() {
   const command = getGoToCommand();
   if (!command) {
     showLevelCompleteModal('Добавь блок «Перейти в x, y» и укажи координаты.', false, { showRetry: true, hideTitle: true });
+    return;
+  }
+
+  const grid = getCurrentGrid();
+  const hasInvalidStep = ((command.x - grid.min) % grid.step !== 0) || ((command.y - grid.min) % grid.step !== 0);
+  const isOutOfRange = command.x < grid.min || command.x > grid.max || command.y < grid.min || command.y > grid.max;
+  if (hasInvalidStep || isOutOfRange) {
+    showLevelCompleteModal(
+      `Для ${getCurrentLevel().title} используй шаг ${grid.step}. Допустимые координаты: от ${grid.min} до ${grid.max}.`,
+      false,
+      { showRetry: true, hideTitle: true },
+    );
     return;
   }
 
