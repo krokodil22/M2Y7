@@ -89,18 +89,25 @@ body {
   font-size: 15px;
 }
 .level-panel {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 12px;
+  padding: 0 12px 12px;
 }
 .level-header {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 5;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 18px;
+  margin-bottom: 0;
 }
+
 .level-meta { display: grid; gap: 4px; }
 .level-meta.compact { align-content: start; }
 .level-meta #level-progress { color: var(--text); font-size: clamp(14px, 1.35vw, 18px); }
@@ -149,14 +156,17 @@ body {
 }
 .board-wrapper {
   position: relative;
+  z-index: 1;
   width: 100%;
   margin: 0;
+  padding-top: 0;
   container-type: inline-size;
   border-radius: 0;
   overflow: hidden;
   border-radius: 15%;
   background: #fff;
 }
+
 .board {
   position: relative;
   aspect-ratio: 591 / 684;
