@@ -511,7 +511,7 @@ async function runProgram() {
 
     const lastCommand = commands[commands.length - 1];
     showLevelCompleteModal(
-      `Пока неверно. Ты посетил ${visitedFinishes.size} из ${finishPoints.length} финишных точек. Последняя точка: (${lastCommand.x}, ${lastCommand.y}).`,
+      `Пока неверно. Ты посетил ${visitedFinishes.size} из ${finishPoints.length} финишных точек.`,
       false,
       { showRetry: true, hideTitle: true },
     );
