@@ -1,12 +1,6 @@
 const DEFAULT_GRID = { min: -5, max: 5, step: 1 };
 const ADVANCED_GRID = { min: -150, max: 150, step: 30 };
 const HERO_START = { x: 0, y: 0 };
-const PLAYFIELD_BOUNDS = {
-  left: 12.57,
-  right: 12.67,
-  top: 21.67,
-  bottom: 13.74,
-};
 
 const levels = [
   { title: 'Уровень 1', finish: { x: 2, y: 1 } },
@@ -151,17 +145,6 @@ function coordinateToPercent(x, y) {
   };
 }
 
-function projectToBoardPercent(x, y) {
-  const coord = coordinateToPercent(x, y);
-  const width = 100 - PLAYFIELD_BOUNDS.left - PLAYFIELD_BOUNDS.right;
-  const height = 100 - PLAYFIELD_BOUNDS.top - PLAYFIELD_BOUNDS.bottom;
-
-  return {
-    left: PLAYFIELD_BOUNDS.left + (coord.left / 100) * width,
-    top: PLAYFIELD_BOUNDS.top + (coord.top / 100) * height,
-  };
-}
-
 function createCoordinateLabels() {
   const labelsLayer = document.createElement('div');
   labelsLayer.className = 'coordinate-labels';
@@ -169,7 +152,7 @@ function createCoordinateLabels() {
   const axisReference = grid.min <= 0 && grid.max >= 0 ? 0 : grid.min;
 
   for (let x = grid.min; x <= grid.max; x += grid.step) {
-    const projected = projectToBoardPercent(x, axisReference);
+    const projected = coordinateToPercent(x, axisReference);
     const xLabel = document.createElement('span');
     xLabel.className = 'coord-label x-label';
     xLabel.textContent = String(x);
@@ -179,7 +162,7 @@ function createCoordinateLabels() {
   }
 
   for (let y = grid.min; y <= grid.max; y += grid.step) {
-    const projected = projectToBoardPercent(axisReference, y);
+    const projected = coordinateToPercent(axisReference, y);
     const yLabel = document.createElement('span');
     yLabel.className = 'coord-label y-label';
     yLabel.textContent = String(y);
@@ -191,15 +174,15 @@ function createCoordinateLabels() {
   const xAxisName = document.createElement('span');
   xAxisName.className = 'axis-name axis-name-x';
   xAxisName.textContent = 'X';
-  xAxisName.style.left = `calc(${projectToBoardPercent(grid.max, axisReference).left}% + 2.2cqw)`;
-  xAxisName.style.top = `${projectToBoardPercent(axisReference, axisReference).top}%`;
+  xAxisName.style.left = `calc(${coordinateToPercent(grid.max, axisReference).left}% + 2.2cqi)`;
+  xAxisName.style.top = `${coordinateToPercent(axisReference, axisReference).top}%`;
   labelsLayer.appendChild(xAxisName);
 
   const yAxisName = document.createElement('span');
   yAxisName.className = 'axis-name axis-name-y';
   yAxisName.textContent = 'Y';
-  yAxisName.style.left = `${projectToBoardPercent(axisReference, axisReference).left}%`;
-  yAxisName.style.top = `calc(${projectToBoardPercent(axisReference, grid.max).top}% - 2.4cqw)`;
+  yAxisName.style.left = `${coordinateToPercent(axisReference, axisReference).left}%`;
+  yAxisName.style.top = `calc(${coordinateToPercent(axisReference, grid.max).top}% - 2.4cqi)`;
   labelsLayer.appendChild(yAxisName);
 
   return labelsLayer;
@@ -230,7 +213,7 @@ function createFinishPoints() {
   return finishes.map(({ x, y }) => {
     const finish = document.createElement('div');
     finish.className = 'finish-point';
-    const pos = projectToBoardPercent(x, y);
+    const pos = coordinateToPercent(x, y);
     finish.style.left = `${pos.left}%`;
     finish.style.top = `${pos.top}%`;
     return finish;
@@ -240,7 +223,7 @@ function createFinishPoints() {
 function createHero() {
   const hero = document.createElement('div');
   hero.className = 'hero';
-  const pos = projectToBoardPercent(currentHeroPosition.x, currentHeroPosition.y);
+  const pos = coordinateToPercent(currentHeroPosition.x, currentHeroPosition.y);
   hero.style.left = `${pos.left}%`;
   hero.style.top = `${pos.top}%`;
   return hero;
@@ -257,8 +240,8 @@ function renderBoard() {
 
   const playfield = document.createElement('div');
   playfield.className = 'board-playfield';
-  board.appendChild(createCoordinateLabels());
   board.appendChild(playfield);
+  board.appendChild(createCoordinateLabels());
 
   const entitiesLayer = document.createElement('div');
   entitiesLayer.className = 'board-entities';
@@ -266,7 +249,7 @@ function renderBoard() {
     entitiesLayer.appendChild(finishPoint);
   }
   entitiesLayer.appendChild(createHero());
-  board.appendChild(entitiesLayer);
+  playfield.appendChild(entitiesLayer);
 
   levelTitle.textContent = level.title;
   levelProgress.textContent = `Открыто уровней: ${highestUnlockedLevel + 1} из ${levels.length}`;
@@ -439,7 +422,7 @@ function animateHeroTo(targetPosition) {
     };
 
     const fallbackTimer = window.setTimeout(finish, durationMs + 90);
-    const projected = projectToBoardPercent(targetPosition.x, targetPosition.y);
+    const projected = coordinateToPercent(targetPosition.x, targetPosition.y);
 
     heroElement.addEventListener('transitionend', onTransitionEnd);
     heroElement.style.transitionDuration = `${durationMs}ms`;
