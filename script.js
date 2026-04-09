@@ -305,7 +305,7 @@ function initializeBlockly() {
     },
     zoom: {
       controls: true,
-      wheel: true,
+      wheel: false,
       startScale: 0.95,
       maxScale: 1.4,
       minScale: 0.7,
@@ -314,7 +314,7 @@ function initializeBlockly() {
     move: {
       scrollbars: true,
       drag: true,
-      wheel: true,
+      wheel: false,
     },
   });
 
