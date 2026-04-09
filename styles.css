@@ -212,7 +212,12 @@ body {
 }
 .coordinate-labels {
   position: absolute;
-  inset: 0;
+  left: 12.57%;
+  right: 12.67%;
+  top: 21.67%;
+  bottom: 13.74%;
+  container-type: inline-size;
+  overflow: visible;
   z-index: 2;
   pointer-events: none;
 }

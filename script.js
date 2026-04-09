@@ -241,7 +241,7 @@ function renderBoard() {
   const playfield = document.createElement('div');
   playfield.className = 'board-playfield';
   board.appendChild(playfield);
-  playfield.appendChild(createCoordinateLabels());
+  board.appendChild(createCoordinateLabels());
 
   const entitiesLayer = document.createElement('div');
   entitiesLayer.className = 'board-entities';
