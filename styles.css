@@ -199,6 +199,7 @@ body {
   right: 12.67%;
   top: 21.67%;
   bottom: 13.74%;
+  container-type: inline-size;
   border-radius: 7.2%;
   overflow: hidden;
   z-index: 1;
@@ -206,7 +207,7 @@ body {
 .board-entities {
   position: absolute;
   inset: 0;
-  z-index: 4;
+  z-index: 3;
   pointer-events: none;
 }
 .coordinate-labels {
@@ -219,7 +220,7 @@ body {
   position: absolute;
   color: #5c54d6;
   font-weight: 700;
-  font-size: clamp(9px, 2.2cqw, 17px);
+  font-size: clamp(9px, 2.2cqi, 17px);
   transform: translate(-50%, -50%);
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.85);
   background: #D6D1FF;
@@ -237,7 +238,7 @@ body {
   position: absolute;
   color: #4d45bf;
   font-weight: 800;
-  font-size: clamp(13px, 1.6vw, 18px);
+  font-size: clamp(13px, 2.7cqi, 18px);
   line-height: 1;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.9);
 }
