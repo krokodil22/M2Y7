@@ -166,6 +166,8 @@ function createCoordinateLabels() {
     const yLabel = document.createElement('span');
     yLabel.className = 'coord-label y-label';
     yLabel.textContent = String(y);
+    if (y === grid.max) yLabel.classList.add('coord-label-edge-top');
+    if (y === grid.min) yLabel.classList.add('coord-label-edge-bottom');
     yLabel.style.left = `${projected.left}%`;
     yLabel.style.top = `${projected.top}%`;
     labelsLayer.appendChild(yLabel);
