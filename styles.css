@@ -239,6 +239,12 @@ body {
 .coord-label-edge-right {
   transform: translate(-100%, -50%);
 }
+.coord-label-edge-top {
+  transform: translate(-50%, 0);
+}
+.coord-label-edge-bottom {
+  transform: translate(-50%, -100%);
+}
 .axis-name {
   position: absolute;
   color: #4d45bf;
